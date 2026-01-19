@@ -24,26 +24,6 @@
             <artifactId>jsonassertx-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.jsonassertx</groupId>
-            <artifactId>jsonassertx-junit5</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonassertx</groupId>
-            <artifactId>jsonassertx-schema</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonassertx</groupId>
-            <artifactId>jsonassertx-snapshots</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonassertx</groupId>
-            <artifactId>jsonassertx-spring</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- JSON Processing -->
         <dependency>
