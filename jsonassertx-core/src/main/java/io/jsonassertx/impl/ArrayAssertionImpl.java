@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonassertx.ArrayAssertion;
 import io.jsonassertx.JsonAssertion;
+import io.jsonassertx.util.JsonDiffFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
     public ArrayAssertion hasSize(int size) {
         if (jsonNode.size() != size) {
             throw new AssertionError(
-                String.format("Expected array size to be %d but was %d", size, jsonNode.size())
+                JsonDiffFormatter.formatArraySizeMismatch(size, jsonNode.size(), elements)
             );
         }
         return this;
@@ -38,8 +39,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
     public ArrayAssertion contains(Object element) {
         if (!elements.contains(element)) {
             throw new AssertionError(
-                String.format("Expected array to contain %s but it was not found%nArray: %s", 
-                    element, elements)
+                JsonDiffFormatter.formatMissingElement(element, elements)
             );
         }
         return this;
@@ -74,8 +74,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
         for (int i = 0; i < elements.size(); i++) {
             if (!predicate.test(elements.get(i))) {
                 throw new AssertionError(
-                    String.format("Expected all elements to match predicate but element at index %d did not: %s", 
-                        i, elements.get(i))
+                    JsonDiffFormatter.formatPredicateFailure("allMatch", i, elements.get(i), elements)
                 );
             }
         }
@@ -90,7 +89,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
             }
         }
         throw new AssertionError(
-            String.format("Expected at least one element to match predicate but none did%nArray: %s", elements)
+            JsonDiffFormatter.formatPredicateFailure("anyMatch", -1, null, elements)
         );
     }
 
@@ -99,8 +98,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
         for (int i = 0; i < elements.size(); i++) {
             if (predicate.test(elements.get(i))) {
                 throw new AssertionError(
-                    String.format("Expected no elements to match predicate but element at index %d did: %s", 
-                        i, elements.get(i))
+                    JsonDiffFormatter.formatPredicateFailure("noneMatch", i, elements.get(i), elements)
                 );
             }
         }

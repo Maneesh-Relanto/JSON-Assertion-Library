@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import io.jsonassertx.*;
+import io.jsonassertx.util.JsonDiffFormatter;
 
 /**
  * Base implementation of {@link JsonAssertion}.
@@ -53,8 +54,7 @@ public class JsonAssertionImpl implements JsonAssertion {
             return this;
         } catch (Exception e) {
             throw new AssertionError(
-                String.format("Expected JSON to have path '%s' but it was not found%n%nJSON:%n%s", 
-                    path, formatJson())
+                JsonDiffFormatter.formatPathNotFound(path, jsonString)
             );
         }
     }

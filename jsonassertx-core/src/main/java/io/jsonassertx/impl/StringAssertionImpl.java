@@ -3,6 +3,7 @@ package io.jsonassertx.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonassertx.StringAssertion;
+import io.jsonassertx.util.JsonDiffFormatter;
 
 import java.util.regex.Pattern;
 
@@ -24,7 +25,7 @@ public class StringAssertionImpl extends JsonAssertionImpl implements StringAsse
     public StringAssertion isEqualTo(String expected) {
         if (!value.equals(expected)) {
             throw new AssertionError(
-                String.format("Expected string to equal '%s' but was '%s'", expected, value)
+                JsonDiffFormatter.formatDifference(currentPath, expected, value)
             );
         }
         return this;

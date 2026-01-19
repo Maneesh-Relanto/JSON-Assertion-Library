@@ -3,6 +3,7 @@ package io.jsonassertx.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonassertx.NumberAssertion;
+import io.jsonassertx.util.JsonDiffFormatter;
 
 /**
  * Implementation of {@link NumberAssertion}.
@@ -22,7 +23,7 @@ public class NumberAssertionImpl extends JsonAssertionImpl implements NumberAsse
     public NumberAssertion isEqualTo(Number expected) {
         if (Double.compare(value, expected.doubleValue()) != 0) {
             throw new AssertionError(
-                String.format("Expected number to equal %s but was %s", expected, value)
+                JsonDiffFormatter.formatDifference(currentPath, expected, value)
             );
         }
         return this;
