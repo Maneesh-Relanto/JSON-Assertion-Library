@@ -7,11 +7,55 @@ package io.jsonassertx;
  * Implementations should return {@code this} to enable method chaining.
  * </p>
  *
+ * <h3>Basic Usage</h3>
  * <pre>{@code
+ * // Simple path assertions
  * JsonAssertX.assertThat(jsonString)
  *     .hasPath("$.user.name")
  *     .hasValue("$.user.age", 25)
  *     .isNotEmpty();
+ *
+ * // Type-specific assertions
+ * JsonAssertX.assertThat(jsonString)
+ *     .path("$.email").asString()
+ *     .contains("@example.com");
+ *
+ * JsonAssertX.assertThat(jsonString)
+ *     .path("$.score").asNumber()
+ *     .isGreaterThan(90);
+ *
+ * JsonAssertX.assertThat(jsonString)
+ *     .path("$.active").asBoolean()
+ *     .isTrue();
+ * }</pre>
+ *
+ * <h3>Array Assertions</h3>
+ * <pre>{@code
+ * JsonAssertX.assertThat(jsonString)
+ *     .path("$.tags").asArray()
+ *     .hasSize(3)
+ *     .contains("testing")
+ *     .allMatch(tag -> ((String) tag).length() > 0);
+ * }</pre>
+ *
+ * <h3>Object Assertions</h3>
+ * <pre>{@code
+ * JsonAssertX.assertThat(jsonString)
+ *     .path("$.user").asObject()
+ *     .hasKeys("name", "email", "age")
+ *     .hasKeyCount(3);
+ * }</pre>
+ *
+ * <h3>Nested Navigation</h3>
+ * <pre>{@code
+ * JsonAssertX.assertThat(jsonString)
+ *     .path("$.company.employees[0].name").asString()
+ *     .isEqualTo("Alice");
+ *
+ * // JSONPath filters
+ * JsonAssertX.assertThat(jsonString)
+ *     .path("$.employees[?(@.role == 'Manager')].salary").asArray()
+ *     .allMatch(salary -> ((Number) salary).doubleValue() > 100000);
  * }</pre>
  *
  * @since 1.0.0
@@ -20,6 +64,13 @@ public interface JsonAssertion {
 
     /**
      * Asserts that the JSON contains the specified path.
+     *
+     * <pre>{@code
+     * String json = "{\"user\": {\"name\": \"John\", \"age\": 30}}";
+     * JsonAssertX.assertThat(json)
+     *     .hasPath("$.user.name")
+     *     .hasPath("$.user.age");
+     * }</pre>
      *
      * @param path the JSON path to check (using JsonPath notation)
      * @return this assertion object for method chaining
@@ -31,6 +82,12 @@ public interface JsonAssertion {
     /**
      * Asserts that the JSON does not contain the specified path.
      *
+     * <pre>{@code
+     * String json = "{\"user\": {\"name\": \"John\"}}";
+     * JsonAssertX.assertThat(json)
+     *     .doesNotHavePath("$.user.password");
+     * }</pre>
+     *
      * @param path the JSON path to check (using JsonPath notation)
      * @return this assertion object for method chaining
      * @throws AssertionError if the path exists
@@ -40,6 +97,13 @@ public interface JsonAssertion {
 
     /**
      * Asserts that the value at the specified path equals the expected value.
+     *
+     * <pre>{@code
+     * String json = "{\"user\": {\"name\": \"John\", \"age\": 30}}";
+     * JsonAssertX.assertThat(json)
+     *     .hasValue("$.user.name", "John")
+     *     .hasValue("$.user.age", 30);
+     * }</pre>
      *
      * @param path the JSON path to check
      * @param expected the expected value
@@ -70,6 +134,13 @@ public interface JsonAssertion {
      * For arrays: has at least one element
      * For strings: has non-zero length
      *
+     * <pre>{@code
+     * String json = "{\"user\": {\"name\": \"John\"}}";
+     * JsonAssertX.assertThat(json)
+     *     .path("$.user").isObject()
+     *     .isNotEmpty();
+     * }</pre>
+     *
      * @return this assertion object for method chaining
      * @throws AssertionError if the JSON is empty
      */
@@ -81,6 +152,13 @@ public interface JsonAssertion {
      * For arrays: has no elements
      * For strings: has zero length
      *
+     * <pre>{@code
+     * String json = "{\"items\": []}";
+     * JsonAssertX.assertThat(json)
+     *     .path("$.items").asArray()
+     *     .isEmpty();
+     * }</pre>
+     *
      * @return this assertion object for method chaining
      * @throws AssertionError if the JSON is not empty
      */
@@ -88,6 +166,14 @@ public interface JsonAssertion {
 
     /**
      * Asserts that the JSON at the current path is an object.
+     *
+     * <pre>{@code
+     * String json = "{\"user\": {\"name\": \"John\", \"age\": 30}}";
+     * JsonAssertX.assertThat(json)
+     *     .path("$.user").isObject()
+     *     .hasKey("name")
+     *     .hasKey("age");
+     * }</pre>
      *
      * @return an object assertion for further object-specific checks
      * @throws AssertionError if the JSON is not an object
@@ -188,6 +274,20 @@ public interface JsonAssertion {
 
     /**
      * Navigates to the specified JSON path and returns an assertion for that path.
+     *
+     * <pre>{@code
+     * String json = "{\"company\": {\"employees\": [{\"name\": \"Alice\"}, {\"name\": \"Bob\"}]}}";
+     * // Navigate to nested property
+     * JsonAssertX.assertThat(json)
+     *     .path("$.company.employees[0].name").asString()
+     *     .isEqualTo("Alice");
+     * 
+     * // Use JSONPath filters
+     * JsonAssertX.assertThat(json)
+     *     .path("$.company.employees[?(@.name == 'Bob')].name")
+     *     .asArray()
+     *     .contains("Bob");
+     * }</pre>
      *
      * @param path the JSON path to navigate to
      * @return a new assertion scoped to the specified path

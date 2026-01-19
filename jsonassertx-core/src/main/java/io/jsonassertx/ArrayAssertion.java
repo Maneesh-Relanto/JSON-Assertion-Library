@@ -4,6 +4,40 @@ import java.util.function.Predicate;
 
 /**
  * Assertion interface for array-specific operations.
+ * <p>
+ * Provides fluent assertion methods for validating JSON arrays.
+ * Supports size checks, element searches, and predicate-based validations.
+ * All methods return {@code this} to enable method chaining.
+ * </p>
+ *
+ * <h3>Usage Examples</h3>
+ * <pre>{@code
+ * String json = "{\"tags\": [\"java\", \"testing\", \"json\"], \"scores\": [85, 90, 95]}";
+ *
+ * // Size and containment
+ * JsonAssertX.assertThat(json)
+ *     .path("$.tags").asArray()
+ *     .hasSize(3)
+ *     .contains("testing")
+ *     .doesNotContain("python");
+ *
+ * // Multiple elements
+ * JsonAssertX.assertThat(json)
+ *     .path("$.tags").asArray()
+ *     .containsAll("java", "testing", "json");
+ *
+ * // Predicate assertions
+ * JsonAssertX.assertThat(json)
+ *     .path("$.scores").asArray()
+ *     .allMatch(score -> (int) score >= 80)   // All scores >= 80
+ *     .anyMatch(score -> (int) score > 90);   // At least one > 90
+ *
+ * // Element navigation
+ * JsonAssertX.assertThat(json)
+ *     .path("$.tags").asArray()
+ *     .element(0).asString()
+ *     .isEqualTo("java");
+ * }</pre>
  *
  * @since 1.0.0
  */
@@ -11,6 +45,13 @@ public interface ArrayAssertion extends JsonAssertion {
 
     /**
      * Asserts that the array has the specified size.
+     *
+     * <pre>{@code
+     * String json = "{\"tags\": [\"java\", \"testing\", \"json\"]}";
+     * JsonAssertX.assertThat(json)
+     *     .path("$.tags").asArray()
+     *     .hasSize(3);
+     * }</pre>
      *
      * @param size the expected array size
      * @return this assertion object for method chaining
@@ -20,6 +61,13 @@ public interface ArrayAssertion extends JsonAssertion {
 
     /**
      * Asserts that the array contains the specified element.
+     *
+     * <pre>{@code
+     * String json = "{\"tags\": [\"java\", \"testing\", \"json\"]}";
+     * JsonAssertX.assertThat(json)
+     *     .path("$.tags").asArray()
+     *     .contains("testing");
+     * }</pre>
      *
      * @param element the element to search for
      * @return this assertion object for method chaining
@@ -48,6 +96,13 @@ public interface ArrayAssertion extends JsonAssertion {
     /**
      * Asserts that all elements in the array match the given predicate.
      *
+     * <pre>{@code
+     * String json = "{\"scores\": [85, 90, 95]}";
+     * JsonAssertX.assertThat(json)
+     *     .path("$.scores").asArray()
+     *     .allMatch(score -> (int) score >= 80);
+     * }</pre>
+     *
      * @param predicate the predicate to test elements against
      * @return this assertion object for method chaining
      * @throws AssertionError if any element does not match
@@ -56,6 +111,13 @@ public interface ArrayAssertion extends JsonAssertion {
 
     /**
      * Asserts that at least one element in the array matches the given predicate.
+     *
+     * <pre>{@code
+     * String json = "{\"scores\": [85, 90, 95]}";
+     * JsonAssertX.assertThat(json)
+     *     .path("$.scores").asArray()
+     *     .anyMatch(score -> (int) score > 90);
+     * }</pre>
      *
      * @param predicate the predicate to test elements against
      * @return this assertion object for method chaining
