@@ -61,10 +61,10 @@ void testUserProfile() {
         """;
     
     assertThat(response)
-        .hasPath("$.user.name").isEqualTo("John Doe")
-        .hasPath("$.user.age").isBetween(18, 100)
-        .hasPath("$.user.email").contains("@example.com")
-        .hasPath("$.user.active").isTrue();
+        .path("$.user.name").asString().isEqualTo("John Doe")
+        .path("$.user.age").asNumber().isBetween(18, 100)
+        .path("$.user.email").asString().contains("@example.com")
+        .path("$.user.active").asBoolean().isTrue();
 }
 ```
 
@@ -79,22 +79,22 @@ That's it! Clean, readable, and works immediately.
 ```java
 // String assertions
 assertThat(json)
-    .hasPath("$.username").isEqualTo("johndoe")
-    .hasPath("$.bio").contains("developer")
-    .hasPath("$.website").startsWith("https://")
-    .hasPath("$.email").matches(".*@example\\.com");
+    .path("$.username").asString().isEqualTo("johndoe")
+    .path("$.bio").asString().contains("developer")
+    .path("$.website").asString().startsWith("https://")
+    .path("$.email").asString().matches(".*@example\\.com");
 
 // Number assertions
 assertThat(json)
-    .hasPath("$.price").isEqualTo(99.99)
-    .hasPath("$.quantity").isGreaterThan(0)
-    .hasPath("$.discount").isBetween(0, 100)
-    .hasPath("$.balance").isPositive();
+    .path("$.price").asNumber().isEqualTo(99.99)
+    .path("$.quantity").asNumber().isGreaterThan(0)
+    .path("$.discount").asNumber().isBetween(0, 100)
+    .path("$.balance").asNumber().isPositive();
 
 // Boolean assertions
 assertThat(json)
-    .hasPath("$.verified").isTrue()
-    .hasPath("$.deleted").isFalse();
+    .path("$.verified").asBoolean().isTrue()
+    .path("$.deleted").asBoolean().isFalse();
 
 // Null checks
 assertThat(json)
@@ -113,15 +113,15 @@ String json = """
     """;
 
 assertThat(json)
-    .hasPath("$.users").isArray()
-        .hasSize(3)
-        .contains("Alice")
-        .doesNotContain("David");
+    .path("$.users").asArray()
+    .hasSize(3)
+    .contains("Alice")
+    .doesNotContain("David");
 
 assertThat(json)
-    .hasPath("$.scores").isArray()
-        .isNotEmpty()
-        .allMatch(score -> score.asInt() >= 0);
+    .path("$.scores").asArray()
+    .isNotEmpty()
+    .allMatch(score -> ((Number) score).intValue() >= 0);
 ```
 
 ### Complex Nested JSON
@@ -147,11 +147,11 @@ String json = """
     """;
 
 assertThat(json)
-    .hasPath("$.user.profile.name").isEqualTo("Jane Smith")
-    .hasPath("$.user.profile.contact.email").contains("@")
-    .hasPath("$.user.roles").isArray().hasSize(2)
-    .hasPath("$.user.roles").contains("admin")
-    .hasPath("$.user.settings.theme").isEqualTo("dark");
+    .path("$.user.profile.name").asString().isEqualTo("Jane Smith")
+    .path("$.user.profile.contact.email").asString().contains("@")
+    .path("$.user.roles").asArray().hasSize(2)
+    .path("$.user.roles").asArray().contains("admin")
+    .path("$.user.settings.theme").asString().isEqualTo("dark");
 ```
 
 ### Testing Real API Responses
@@ -175,12 +175,12 @@ void testGitHubUserAPI() {
         """;
     
     assertThat(response)
-        .hasPath("$.login").isEqualTo("octocat")
-        .hasPath("$.id").isPositive()
-        .hasPath("$.type").isEqualTo("User")
-        .hasPath("$.site_admin").isFalse()
-        .hasPath("$.followers").isGreaterThan(1000)
-        .hasPath("$.created_at").isNotEmpty();
+        .path("$.login").asString().isEqualTo("octocat")
+        .path("$.id").asNumber().isPositive()
+        .path("$.type").asString().isEqualTo("User")
+        .path("$.site_admin").asBoolean().isFalse()
+        .path("$.followers").asNumber().isGreaterThan(1000)
+        .path("$.created_at").asString().isNotEmpty();
 }
 ```
 
@@ -198,9 +198,9 @@ String json = """
     """;
 
 assertThat(json)
-    .hasPath("$.user").isObject()
-        .hasKeys("id", "username", "email")
-        .doesNotHaveKey("password");  // Ensure sensitive fields not exposed
+    .path("$.user").asObject()
+    .hasKeys("id", "username", "email")
+    .doesNotHaveKey("password");  // Ensure sensitive fields not exposed
 ```
 
 ### Array of Objects
@@ -217,10 +217,14 @@ String json = """
     """;
 
 assertThat(json)
-    .hasPath("$.orders").isArray()
-        .hasSize(3)
-        .allMatch(order -> order.path("$.total").asDouble() > 0)
-        .anyMatch(order -> order.path("$.status").equals("pending"));
+    .path("$.orders").asArray()
+    .hasSize(3)
+    .allMatch(order -> {
+        if (order instanceof com.fasterxml.jackson.databind.JsonNode) {
+            return ((com.fasterxml.jackson.databind.JsonNode) order).get("total").asDouble() > 0;
+        }
+        return false;
+    });
 ```
 
 ---
@@ -237,9 +241,9 @@ assertTrue(jsonPath.getBoolean("user.active"));
 
 // JsonAssertX - Fluent and readable
 assertThat(response)
-    .hasPath("$.user.name").isEqualTo("John")
-    .hasPath("$.user.age").isEqualTo(30)
-    .hasPath("$.user.active").isTrue();
+    .path("$.user.name").asString().isEqualTo("John")
+    .path("$.user.age").asNumber().isEqualTo(30)
+    .path("$.user.active").asBoolean().isTrue();
 ```
 
 ### vs. AssertJ
@@ -250,7 +254,7 @@ assertThatJson(response)
 
 // JsonAssertX - Type-aware assertions
 assertThat(response)
-    .hasPath("$.user.age").isBetween(18, 100);  // ✅ Number-specific
+    .path("$.user.age").asNumber().isBetween(18, 100);  // ✅ Number-specific
 ```
 
 ### vs. Manual JSONObject
@@ -261,7 +265,7 @@ assertEquals("John", json.getJSONObject("user").getString("name"));
 
 // JsonAssertX - Concise
 assertThat(response)
-    .hasPath("$.user.name").isEqualTo("John");
+    .path("$.user.name").asString().isEqualTo("John");
 ```
 
 ---
