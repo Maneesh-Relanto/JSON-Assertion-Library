@@ -291,12 +291,14 @@ public class ApiResponseExample {
         JsonAssertX.assertThat(weather)
             .path("$.forecast").asArray()
             .allMatch(day -> {
-                Object highObj = ((java.util.Map<?, ?>) day).get("high");
-                Object lowObj = ((java.util.Map<?, ?>) day).get("low");
-                int high = highObj instanceof Number ? ((Number) highObj).intValue() : 0;
-                int low = lowObj instanceof Number ? ((Number) lowObj).intValue() : 0;
-                return high > low;
-            }, "high temp > low temp");
+                if (day instanceof com.fasterxml.jackson.databind.JsonNode) {
+                    com.fasterxml.jackson.databind.JsonNode node = (com.fasterxml.jackson.databind.JsonNode) day;
+                    int high = node.get("high").asInt();
+                    int low = node.get("low").asInt();
+                    return high > low;
+                }
+                return false;
+            });
         System.out.println("✓ All forecast days have high > low");
         
         System.out.println("\n=== All API Examples Passed! ===\n");

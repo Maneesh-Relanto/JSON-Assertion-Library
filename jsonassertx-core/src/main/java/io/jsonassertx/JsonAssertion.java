@@ -95,12 +95,36 @@ public interface JsonAssertion {
     ObjectAssertion isObject();
 
     /**
+     * Treats the JSON at the current path as an object and returns object-specific assertions.
+     * Alias for {@link #isObject()} with more intuitive naming.
+     *
+     * @return an object assertion for further object-specific checks
+     * @throws AssertionError if the JSON is not an object
+     * @see #isObject()
+     */
+    default ObjectAssertion asObject() {
+        return isObject();
+    }
+
+    /**
      * Asserts that the JSON at the current path is an array.
      *
      * @return an array assertion for further array-specific checks
      * @throws AssertionError if the JSON is not an array
      */
     ArrayAssertion isArray();
+
+    /**
+     * Treats the JSON at the current path as an array and returns array-specific assertions.
+     * Alias for {@link #isArray()} with more intuitive naming.
+     *
+     * @return an array assertion for further array-specific checks
+     * @throws AssertionError if the JSON is not an array
+     * @see #isArray()
+     */
+    default ArrayAssertion asArray() {
+        return isArray();
+    }
 
     /**
      * Asserts that the JSON at the current path is a string.
@@ -111,6 +135,18 @@ public interface JsonAssertion {
     StringAssertion isString();
 
     /**
+     * Treats the JSON at the current path as a string and returns string-specific assertions.
+     * Alias for {@link #isString()} with more intuitive naming.
+     *
+     * @return a string assertion for further string-specific checks
+     * @throws AssertionError if the JSON is not a string
+     * @see #isString()
+     */
+    default StringAssertion asString() {
+        return isString();
+    }
+
+    /**
      * Asserts that the JSON at the current path is a number.
      *
      * @return a number assertion for further number-specific checks
@@ -119,12 +155,36 @@ public interface JsonAssertion {
     NumberAssertion isNumber();
 
     /**
+     * Treats the JSON at the current path as a number and returns number-specific assertions.
+     * Alias for {@link #isNumber()} with more intuitive naming.
+     *
+     * @return a number assertion for further number-specific checks
+     * @throws AssertionError if the JSON is not a number
+     * @see #isNumber()
+     */
+    default NumberAssertion asNumber() {
+        return isNumber();
+    }
+
+    /**
      * Asserts that the JSON at the current path is a boolean.
      *
      * @return a boolean assertion for further boolean-specific checks
      * @throws AssertionError if the JSON is not a boolean
      */
     BooleanAssertion isBoolean();
+
+    /**
+     * Treats the JSON at the current path as a boolean and returns boolean-specific assertions.
+     * Alias for {@link #isBoolean()} with more intuitive naming.
+     *
+     * @return a boolean assertion for further boolean-specific checks
+     * @throws AssertionError if the JSON is not a boolean
+     * @see #isBoolean()
+     */
+    default BooleanAssertion asBoolean() {
+        return isBoolean();
+    }
 
     /**
      * Navigates to the specified JSON path and returns an assertion for that path.

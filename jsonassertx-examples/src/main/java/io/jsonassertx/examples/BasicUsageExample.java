@@ -144,13 +144,13 @@ public class BasicUsageExample {
         // Assert all elements match predicate
         JsonAssertX.assertThat(json)
             .path("$.scores").asArray()
-            .allMatch(score -> (int) score >= 80, "all scores >= 80");
+            .allMatch(score -> (int) score >= 80);
         System.out.println("✓ All scores >= 80");
         
         // Assert any element matches predicate
         JsonAssertX.assertThat(json)
             .path("$.scores").asArray()
-            .anyMatch(score -> (int) score > 90, "any score > 90");
+            .anyMatch(score -> (int) score > 90);
         System.out.println("✓ Any score > 90");
         
         // Assert array is empty
@@ -237,7 +237,7 @@ public class BasicUsageExample {
         // Check all engineers have salary >= 100000
         JsonAssertX.assertThat(json)
             .path("$.company.employees[?(@.role == 'Engineer')].salary").asArray()
-            .allMatch(salary -> (int) salary >= 100000, "all engineers >= 100000");
+            .allMatch(salary -> (int) salary >= 100000);
         System.out.println("✓ All engineers have salary >= 100000");
         
         System.out.println("\n=== All Examples Passed! ===\n");
