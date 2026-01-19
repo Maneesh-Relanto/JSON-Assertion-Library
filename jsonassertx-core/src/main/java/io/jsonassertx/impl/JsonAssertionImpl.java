@@ -53,7 +53,7 @@ public class JsonAssertionImpl implements JsonAssertion {
             return this;
         } catch (Exception e) {
             throw new AssertionError(
-                String.format("Expected JSON to have path '%s' but it was not found\n\nJSON:\n%s", 
+                String.format("Expected JSON to have path '%s' but it was not found%n%nJSON:%n%s", 
                     path, formatJson())
             );
         }
@@ -64,7 +64,7 @@ public class JsonAssertionImpl implements JsonAssertion {
         try {
             JsonPath.read(jsonString, path);
             throw new AssertionError(
-                String.format("Expected JSON to not have path '%s' but it was found\n\nJSON:\n%s", 
+                String.format("Expected JSON to not have path '%s' but it was found%n%nJSON:%n%s", 
                     path, formatJson())
             );
         } catch (com.jayway.jsonpath.PathNotFoundException e) {
@@ -82,19 +82,18 @@ public class JsonAssertionImpl implements JsonAssertion {
             if (expected != null && expected.equals(actual)) {
                 return this;
             }
-            if (expected instanceof Number && actual instanceof Number) {
-                if (compareNumbers((Number) expected, (Number) actual)) {
-                    return this;
-                }
+            if (expected instanceof Number && actual instanceof Number && 
+                compareNumbers((Number) expected, (Number) actual)) {
+                return this;
             }
             
             throw new AssertionError(
-                String.format("JSON assertion failed at path: %s\n\nExpected: %s\nActual:   %s\n\nJSON:\n%s",
+                String.format("JSON assertion failed at path: %s%n%nExpected: %s%nActual:   %s%n%nJSON:%n%s",
                     path, expected, actual, formatJson())
             );
         } catch (com.jayway.jsonpath.PathNotFoundException e) {
             throw new AssertionError(
-                String.format("Path '%s' not found in JSON\n\nJSON:\n%s", path, formatJson())
+                String.format("Path '%s' not found in JSON%n%nJSON:%n%s", path, formatJson())
             );
         }
     }
@@ -111,7 +110,7 @@ public class JsonAssertionImpl implements JsonAssertion {
     public JsonAssertion isNull() {
         if (jsonNode != null && !jsonNode.isNull()) {
             throw new AssertionError(
-                String.format("Expected JSON to be null but it was:\n%s", formatJson())
+                String.format("Expected JSON to be null but it was:%n%s", formatJson())
             );
         }
         return this;
@@ -142,18 +141,12 @@ public class JsonAssertionImpl implements JsonAssertion {
             return this; // null is considered empty
         }
         
-        boolean empty = false;
-        if (jsonNode.isObject() && jsonNode.size() == 0) {
-            empty = true;
-        } else if (jsonNode.isArray() && jsonNode.size() == 0) {
-            empty = true;
-        } else if (jsonNode.isTextual() && jsonNode.asText().isEmpty()) {
-            empty = true;
-        }
+        boolean empty = ((jsonNode.isObject() || jsonNode.isArray()) && jsonNode.size() == 0) ||
+                        (jsonNode.isTextual() && jsonNode.asText().isEmpty());
         
         if (!empty) {
             throw new AssertionError(
-                String.format("Expected JSON to be empty but it was:\n%s", formatJson())
+                String.format("Expected JSON to be empty but it was:%n%s", formatJson())
             );
         }
         
@@ -218,7 +211,7 @@ public class JsonAssertionImpl implements JsonAssertion {
             return new JsonAssertionImpl(jsonString, node, path, objectMapper);
         } catch (Exception e) {
             throw new AssertionError(
-                String.format("Path '%s' not found in JSON\n\nJSON:\n%s", path, formatJson())
+                String.format("Path '%s' not found in JSON%n%nJSON:%n%s", path, formatJson())
             );
         }
     }

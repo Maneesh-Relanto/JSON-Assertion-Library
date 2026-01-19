@@ -38,7 +38,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
     public ArrayAssertion contains(Object element) {
         if (!elements.contains(element)) {
             throw new AssertionError(
-                String.format("Expected array to contain %s but it was not found\nArray: %s", 
+                String.format("Expected array to contain %s but it was not found%nArray: %s", 
                     element, elements)
             );
         }
@@ -50,7 +50,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
         for (Object element : expectedElements) {
             if (!elements.contains(element)) {
                 throw new AssertionError(
-                    String.format("Expected array to contain %s but it was not found\nArray: %s", 
+                    String.format("Expected array to contain %s but it was not found%nArray: %s", 
                         element, elements)
                 );
             }
@@ -62,7 +62,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
     public ArrayAssertion doesNotContain(Object element) {
         if (elements.contains(element)) {
             throw new AssertionError(
-                String.format("Expected array to not contain %s but it was found\nArray: %s", 
+                String.format("Expected array to not contain %s but it was found%nArray: %s", 
                     element, elements)
             );
         }
@@ -90,7 +90,7 @@ public class ArrayAssertionImpl extends JsonAssertionImpl implements ArrayAssert
             }
         }
         throw new AssertionError(
-            String.format("Expected at least one element to match predicate but none did\nArray: %s", elements)
+            String.format("Expected at least one element to match predicate but none did%nArray: %s", elements)
         );
     }
 

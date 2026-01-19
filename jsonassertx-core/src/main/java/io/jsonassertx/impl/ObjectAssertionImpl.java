@@ -28,7 +28,7 @@ public class ObjectAssertionImpl extends JsonAssertionImpl implements ObjectAsse
     public ObjectAssertion hasKey(String key) {
         if (!keys.contains(key)) {
             throw new AssertionError(
-                String.format("Expected object to have key '%s' but it was not found\nAvailable keys: %s", 
+                String.format("Expected object to have key '%s' but it was not found%nAvailable keys: %s", 
                     key, keys)
             );
         }
@@ -40,7 +40,7 @@ public class ObjectAssertionImpl extends JsonAssertionImpl implements ObjectAsse
         for (String key : expectedKeys) {
             if (!keys.contains(key)) {
                 throw new AssertionError(
-                    String.format("Expected object to have key '%s' but it was not found\nAvailable keys: %s", 
+                    String.format("Expected object to have key '%s' but it was not found%nAvailable keys: %s", 
                         key, keys)
                 );
             }
@@ -62,7 +62,7 @@ public class ObjectAssertionImpl extends JsonAssertionImpl implements ObjectAsse
     public ObjectAssertion hasKeyCount(int count) {
         if (keys.size() != count) {
             throw new AssertionError(
-                String.format("Expected object to have %d keys but it has %d\nKeys: %s", 
+                String.format("Expected object to have %d keys but it has %d%nKeys: %s", 
                     count, keys.size(), keys)
             );
         }
