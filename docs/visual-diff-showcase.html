@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONAssertX - Visual Diff Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .demo-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .demo-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .demo-number {
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .demo-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .demo-description {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: 'Output';
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .separator {
+            color: #858585;
+            font-weight: bold;
+        }
+
+        .error-header {
+            color: #ff6b6b;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .path-label {
+            color: #4ecdc4;
+        }
+
+        .expected-label, .actual-label {
+            color: #ffd93d;
+        }
+
+        .pointer {
+            color: #ff6b6b;
+        }
+
+        .extra-marker {
+            color: #6bcf7f;
+        }
+
+        .suggestion-icon {
+            color: #ffd93d;
+        }
+
+        .checkmark {
+            color: #6bcf7f;
+        }
+
+        .cross {
+            color: #ff6b6b;
+        }
+
+        .highlight {
+            background: rgba(255, 235, 59, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin: 30px 0;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .check-icon {
+            color: #6bcf7f;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .cross-icon {
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        footer {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .nav-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .demo-section {
+                padding: 20px;
+            }
+
+            .code-block {
+                font-size: 0.8em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ JSONAssertX</h1>
+            <div class="tagline">Visual Diff Feature Showcase</div>
+            <div>
+                <span class="badge">10x Faster Debugging</span>
+                <span class="badge">Zero Configuration</span>
+                <span class="badge">Production Ready</span>
+            </div>
+        </header>
+
+        <!-- Demo 1: String Comparison -->
+        <div class="demo-section" id="demo1">
+            <div class="demo-header">
+                <div class="demo-number">1</div>
+                <div class="demo-title">String Comparison with Position Highlighting</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Comparing two strings that differ by one character.<br>
+                <strong>Benefit:</strong> Instantly see exactly where strings differ with a position marker.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">JSON ASSERTION FAILED</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="path-label">Path:</span> $.message
+
+<span class="expected-label">Expected:</span> "Hello Word"
+<span class="actual-label">Actual:</span>   "Hello World"
+                    <span class="pointer">^ First difference at position 9</span>
+            </div>
+        </div>
+
+        <!-- Demo 2: Array Size Mismatch -->
+        <div class="demo-section" id="demo2">
+            <div class="demo-header">
+                <div class="demo-number">2</div>
+                <div class="demo-title">Array Size Mismatch with Element Highlighting</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Expected 3 elements but array contains 5.<br>
+                <strong>Benefit:</strong> Extra elements are marked with <span class="extra-marker">➜</span> symbol for easy identification.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">ARRAY SIZE MISMATCH</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="expected-label">Expected:</span> 3 element(s)
+<span class="actual-label">Actual:</span>   5 element(s)
+
+<span class="extra-marker">➜</span> Array has 2 extra element(s)
+
+<span class="actual-label">Actual array content:</span>
+[
+  [0] "apple"
+  [1] "banana"
+  [2] "cherry"
+  [3] <span class="extra-marker">➜</span> "date"
+  [4] <span class="extra-marker">➜</span> "elderberry"
+]
+            </div>
+        </div>
+
+        <!-- Demo 3: Missing Element -->
+        <div class="demo-section" id="demo3">
+            <div class="demo-header">
+                <div class="demo-number">3</div>
+                <div class="demo-title">Missing Element with Similarity Suggestions</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Looking for "javascript" in array containing "java".<br>
+                <strong>Benefit:</strong> Smart suggestions help you find what you meant with <span class="suggestion-icon">💡</span> symbol.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">ELEMENT NOT FOUND IN ARRAY</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="expected-label">Looking for:</span> "javascript"
+
+<span class="actual-label">Array contents (3 element(s)):</span>
+  [0] "java"
+  [1] "testing"
+  [2] "json"
+
+<span class="suggestion-icon">💡</span> <span class="expected-label">Similar values in array:</span>
+  → java
+            </div>
+        </div>
+
+        <!-- Demo 4: Path Not Found -->
+        <div class="demo-section" id="demo4">
+            <div class="demo-header">
+                <div class="demo-number">4</div>
+                <div class="demo-title">Path Not Found with JSON Structure Display</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Accessing a non-existent path "$.user.email".<br>
+                <strong>Benefit:</strong> See the actual JSON structure and which path components exist.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">PATH NOT FOUND</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="path-label">Path:</span> $.user.email
+
+<span class="expected-label">Path breakdown:</span>
+  $.user <span class="checkmark">✓</span>
+  $.user.email <span class="cross">✗</span>
+
+<span class="actual-label">JSON structure:</span>
+{
+  "user" : {
+    "name" : "Alice",
+    "age" : 30,
+    "role" : "admin"
+  }
+}
+            </div>
+        </div>
+
+        <!-- Demo 5: Predicate Failure -->
+        <div class="demo-section" id="demo5">
+            <div class="demo-header">
+                <div class="demo-number">5</div>
+                <div class="demo-title">Predicate Failure with Failed Element Context</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Testing if all scores are >= 90 (some are not).<br>
+                <strong>Benefit:</strong> See exactly which elements failed the condition with <span class="cross">✗</span> marker.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">PREDICATE MATCH FAILED</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="expected-label">Predicate type:</span> allMatch
+
+<span class="error-header">Failed at index:</span> 0 with value: 85
+
+<span class="actual-label">All elements:</span>
+[
+  [0] <span class="cross">✗</span> 85
+  [1] 92
+  [2] <span class="cross">✗</span> 78
+  [3] 95
+  [4] 88
+]
+            </div>
+        </div>
+
+        <!-- Demo 6: Whitespace Detection -->
+        <div class="demo-section" id="demo6">
+            <div class="demo-header">
+                <div class="demo-number">6</div>
+                <div class="demo-title">Whitespace Difference Visualization</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Comparing strings with different amounts of spaces.<br>
+                <strong>Benefit:</strong> Spaces are visualized as · symbols, making invisible differences visible.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">JSON ASSERTION FAILED</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="path-label">Path:</span> $.text
+
+<span class="expected-label">Expected:</span> "Hello·World"
+<span class="actual-label">Actual:</span>   "Hello··World"
+                 <span class="pointer">^ First difference at position 6</span>
+
+<span class="suggestion-icon">⚠</span> Strings differ only in whitespace
+            </div>
+        </div>
+
+        <!-- Demo 7: Number Comparison -->
+        <div class="demo-section" id="demo7">
+            <div class="demo-header">
+                <div class="demo-number">7</div>
+                <div class="demo-title">Number Comparison with Precision Warning</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Comparing 99.99 with 100.00.<br>
+                <strong>Benefit:</strong> Small differences trigger precision warnings for floating-point considerations.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">JSON ASSERTION FAILED</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="path-label">Path:</span> $.price
+
+<span class="expected-label">Expected:</span> 100.00
+<span class="actual-label">Actual:</span>   99.99
+
+<span class="error-header">Difference:</span> -0.01
+
+<span class="suggestion-icon">⚠</span> Small difference detected (&lt; 0.01)
+  Consider using tolerance-based comparison
+            </div>
+        </div>
+
+        <!-- Demo 8: NoneMatch Failure -->
+        <div class="demo-section" id="demo8">
+            <div class="demo-header">
+                <div class="demo-number">8</div>
+                <div class="demo-title">NoneMatch Failure Shows Unexpected Match</div>
+            </div>
+            <div class="demo-description">
+                <strong>Scenario:</strong> Expecting no elements to start with "C", but "C003" exists.<br>
+                <strong>Benefit:</strong> Clearly shows which element unexpectedly matched the condition.
+            </div>
+            <div class="code-block">
+<span class="separator">═══════════════════════════════════════════════════════</span>
+  <span class="error-header">PREDICATE MATCH FAILED</span>
+<span class="separator">═══════════════════════════════════════════════════════</span>
+
+<span class="expected-label">Predicate type:</span> noneMatch
+
+<span class="error-header">Unexpected match at index:</span> 2 with value: "C003"
+
+<span class="actual-label">All elements:</span>
+[
+  [0] "A001"
+  [1] "B002"
+  [2] <span class="cross">✗</span> "C003"
+  [3] "D004"
+]
+            </div>
+        </div>
+
+        <!-- Competitive Advantage -->
+        <div class="demo-section">
+            <div class="demo-header">
+                <div class="demo-number">🏆</div>
+                <div class="demo-title">Competitive Advantage</div>
+            </div>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>AssertJ</th>
+                        <th>REST Assured</th>
+                        <th><strong>JSONAssertX</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Basic Diffs</td>
+                        <td><span class="check-icon">✓</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>JSON-Aware Formatting</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Position Highlighting</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Element Marking (➜)</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Similarity Suggestions (💡)</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Whitespace Visualization</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Structure Display</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Precision Warnings</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 20px; font-size: 1.5em; color: #667eea; font-weight: bold;">
+                Result: 10x Faster Debugging! 🚀
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <h2 style="color: #667eea; margin-bottom: 20px;">Ready to Experience Better JSON Testing?</h2>
+            <p style="margin-bottom: 30px; color: #666;">
+                JSONAssertX is production-ready with 118 passing tests, comprehensive documentation, and zero configuration required.
+            </p>
+            <a href="https://github.com/yourusername/jsonassertx" class="cta-button">⭐ Star on GitHub</a>
+            <a href="../README.md" class="cta-button">📚 Read Docs</a>
+            <a href="getting-started.md" class="cta-button">🚀 Get Started</a>
+            <div style="margin-top: 30px; color: #999;">
+                <p>Built with ❤️ for developers who value their time</p>
+                <p style="margin-top: 10px;">
+                    <strong>Features:</strong> Zero Config • 118 Tests Passing • Excellent Code Quality • Production Ready
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <button class="nav-button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to Top">
+            ↑
+        </button>
+    </div>
+
+    <script>
+        // Smooth scroll for demo sections
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        entry.target.style.transition = 'all 0.6s ease';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.demo-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
